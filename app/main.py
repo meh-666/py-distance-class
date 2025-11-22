@@ -34,6 +34,20 @@ class Distance:
         """
         return isinstance(obj, Distance)
 
+    def get_km(self, other: Distance | int | float) -> int | float:
+        """
+        Extracts a numeric kilometer value from the given operand. If the
+        operand is another Distance instance, its `km` attribute is returned.
+        If the operand is int or float, it is treated directly as a
+        kilometer value. This helper method is used to unify arithmetic and
+        comparison operations that must support both Distance objects and
+        numeric types.
+         :param other: Distance or numeric value from which to obtain a
+         kilometer value
+         :return: numeric kilometer value taken from the operand
+        """
+        return other.km if self.is_distance_type(other) else other
+
     def __add__(self, other: Distance | int | float) -> Distance:
         """
         Creates a new Distance instance representing the sum of this
@@ -44,7 +58,7 @@ class Distance:
          :return: new Distance instance with summed kilometers
         """
         return Distance(
-            self.km + (other.km if self.is_distance_type(other) else +other)
+            self.km + self.get_km(other)
         )
 
     def __iadd__(self, other: Distance | int | float) -> Distance:
@@ -56,7 +70,7 @@ class Distance:
          :param other: Distance or numeric kilometers to add
          :return: the same Distance instance after modification
         """
-        self.km += other.km if self.is_distance_type(other) else other
+        self.km += self.get_km(other)
         return self
 
     def __mul__(self, value: int | float) -> Distance:
@@ -87,9 +101,7 @@ class Distance:
          :return: True if self is less than other, otherwise False
         """
         return (
-            self.km < other.km
-            if self.is_distance_type(other)
-            else self.km < other
+            self.km < self.get_km(other)
         )
 
     def __gt__(self, other: Distance | int | float) -> bool:
@@ -100,9 +112,7 @@ class Distance:
          :return: True if self is greater than other, otherwise False
         """
         return (
-            self.km > other.km
-            if self.is_distance_type(other)
-            else self.km > other
+            self.km > self.get_km(other)
         )
 
     def __eq__(self, other: Distance | int | float) -> bool:
@@ -113,9 +123,7 @@ class Distance:
          :return: True if distances are equal, otherwise False
         """
         return (
-            self.km == other.km
-            if self.is_distance_type(other)
-            else self.km == other
+            self.km == self.get_km(other)
         )
 
     def __le__(self, other: Distance | int | float) -> bool:
@@ -126,9 +134,7 @@ class Distance:
          :return: True if self is less than or equal to other, otherwise False
         """
         return (
-            self.km <= other.km
-            if self.is_distance_type(other)
-            else self.km <= other
+            self.km <= self.get_km(other)
         )
 
     def __ge__(self, other: Distance | int | float) -> bool:
@@ -140,7 +146,5 @@ class Distance:
           otherwise False
         """
         return (
-            self.km >= other.km
-            if self.is_distance_type(other)
-            else self.km >= other
+            self.km >= self.get_km(other)
         )
